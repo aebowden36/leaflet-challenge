@@ -29,40 +29,39 @@ d3.json(link).then(function(data){
             })
         }
     }).addTo(myMap);
-    
-    function getColor(magnitude) {
-        switch (true){
-            case magnitude > 6:
-                return "purple";
-    
-            case magnitude > 5:
-                return "blue"
-    
-            case magnitude > 4:
-                return "red"
-    
-            case magnitude > 3:
-                return "orange"
-    
-            case magnitude > 2:
-                return "yellow"
-    
-            case magnitude > 1:
-                return "green"
-        }
-    };
-    
-    var legend = L.control({position:"bottomright"});
-    legend.onAdd = function(){
-        var div = L.DomUntil.create("div", "info legend");
-        var grade = [1,2,3,4,5,6];
-        var color = ["green", "yellow", "orange", "red", "blue", "purple"]
-    
-        for (var i = 0; i<grade.length; i++){
-            div.innerHTML += "<i style='background: " + color[i] + "'>" + grade[i] + (grade[i])+ (grade[i + 1] ? "&ndash;" + grade[i + 1] + "<br>" : "+");
-        }
-        return div;
-    };
-    legend.addTo(myMap);
 });
 
+function getColor(depth) {
+    switch (true){
+        case depth > 90:
+            return "purple";
+
+        case depth > 70:
+            return "blue"
+
+        case depth > 50:
+            return "red"
+
+        case depth > 30:
+            return "orange"
+
+        case depth > 10:
+            return "yellow"
+
+        case depth < 11:
+            return "green"
+    }
+};
+
+var legend = L.control({position:"bottomright"});
+legend.onAdd = function(){
+    var div = L.DomUntil.create("div", "info legend");
+    var grade = [-10,10,30,50,70,90];
+    var labels = []
+
+    for (var i = 0; i<grade.length; i++){
+        div.innerHTML += '<i style="background:' + getColor(grade[i]+1) + '"></i>' + grade[i] + (grade[i])+ (grade[i + 1] ? "&ndash;" + grade[i + 1] + "<br>" : "+");
+    }
+    return div;
+};
+legend.addTo(myMap);

@@ -14,7 +14,6 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 
 var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson"
 
-var mapStyle = 
 d3.json(link).then(function(data){
     L.geoJson(data, {
         pointToLayer: function(features, latlng) {
@@ -23,45 +22,51 @@ d3.json(link).then(function(data){
                 radius: features.properties.mag*2,
                 fillColor: getColor(latlng.alt),
                 fillOpacity: 0.65,
+                stroke: true,
                 weight: 0.5
             }).bindPopup(function(data) {
-                return `${features.properties.place}<br>Magnitude: ${features.properties.mag}`;
+                return `Location: ${features.properties.place}<br>Magnitude: ${features.properties.mag}`;
             })
         }
     }).addTo(myMap);
+    function getColor(depth) {
+        switch (true){
+            case depth > 90:
+                return "purple";
+    
+            case depth > 70:
+                return "blue"
+    
+            case depth > 50:
+                return "red"
+    
+            case depth > 30:
+                return "orange"
+    
+            case depth > 10:
+                return "yellow"
+    
+            case depth < 11:
+                return "green"
+        }
+    };
+    
+    var legend = L.control({position:"bottomright"});
+    
+    legend.onAdd = function(myMap){
+        var div = L.DomUtil.create("div", "info legend"),
+            grades = [-10,10,30,50,70,90],
+            labels = [];
+        
+        div.innerHTML += "<h3 style='text-align: center'>Depth</h3>"
+        
+        for (var i = 0; i<grades.length; i++){
+            div.innerHTML += 
+                '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
+        return div;
+    };
+    legend.addTo(myMap);
 });
 
-function getColor(depth) {
-    switch (true){
-        case depth > 90:
-            return "purple";
-
-        case depth > 70:
-            return "blue"
-
-        case depth > 50:
-            return "red"
-
-        case depth > 30:
-            return "orange"
-
-        case depth > 10:
-            return "yellow"
-
-        case depth < 11:
-            return "green"
-    }
-};
-
-var legend = L.control({position:"bottomright"});
-legend.onAdd = function(){
-    var div = L.DomUntil.create("div", "info legend");
-    var grade = [-10,10,30,50,70,90];
-    var labels = []
-
-    for (var i = 0; i<grade.length; i++){
-        div.innerHTML += '<i style="background:' + getColor(grade[i]+1) + '"></i>' + grade[i] + (grade[i])+ (grade[i + 1] ? "&ndash;" + grade[i + 1] + "<br>" : "+");
-    }
-    return div;
-};
-legend.addTo(myMap);

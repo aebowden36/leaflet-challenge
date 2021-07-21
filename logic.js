@@ -11,3 +11,35 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   id: "mapbox/streets-v11",
   accessToken: API_KEY
 }).addTo(myMap);
+
+var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson"
+
+var mapStyle = 
+d3.json(link).then(function(data){
+    L.geoJson(data, {
+        pointToLayer: function(features, latlng) {
+            return L.circleMarker(latlng, {
+                color: "black",
+                radius: features.properties.mag*2,
+                fillColor: getColor(latlng.alt),
+                fillOpacity: 0.65,
+                weight: 0.5
+            }).bindPopup(function(data) {
+                return `${features.properties.place}<br>Magnitude: ${features.properties.mag}`;
+            })
+        }
+    }).addTo(myMap);
+});
+
+function getColor(depth) {
+    switch (true){
+        case depth > 90:
+            return "purple";
+
+        case depth > 60:
+            return "blue"
+
+        case depth < 59:
+            return "green"
+    }
+};

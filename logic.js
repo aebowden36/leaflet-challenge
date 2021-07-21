@@ -32,22 +32,22 @@ d3.json(link).then(function(data){
     function getColor(depth) {
         switch (true){
             case depth > 90:
-                return "purple";
+                return "#A033FF";
     
             case depth > 70:
-                return "blue"
+                return "#334FFF"
     
             case depth > 50:
-                return "red"
+                return "#FF4633"
     
             case depth > 30:
-                return "orange"
+                return "#FF8633"
     
             case depth > 10:
-                return "yellow"
+                return "#FBFF33"
     
             case depth < 11:
-                return "green"
+                return "#33FF34"
         }
     };
     

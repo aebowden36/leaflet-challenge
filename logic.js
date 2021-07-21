@@ -12,7 +12,7 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   accessToken: API_KEY
 }).addTo(myMap);
 
-var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson"
+var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson"
 
 var mapStyle = 
 d3.json(link).then(function(data){
@@ -29,17 +29,40 @@ d3.json(link).then(function(data){
             })
         }
     }).addTo(myMap);
+    
+    function getColor(magnitude) {
+        switch (true){
+            case magnitude > 6:
+                return "purple";
+    
+            case magnitude > 5:
+                return "blue"
+    
+            case magnitude > 4:
+                return "red"
+    
+            case magnitude > 3:
+                return "orange"
+    
+            case magnitude > 2:
+                return "yellow"
+    
+            case magnitude > 1:
+                return "green"
+        }
+    };
+    
+    var legend = L.control({position:"bottomright"});
+    legend.onAdd = function(){
+        var div = L.DomUntil.create("div", "info legend");
+        var grade = [1,2,3,4,5,6];
+        var color = ["green", "yellow", "orange", "red", "blue", "purple"]
+    
+        for (var i = 0; i<grade.length; i++){
+            div.innerHTML += "<i style='background: " + color[i] + "'>" + grade[i] + (grade[i])+ (grade[i + 1] ? "&ndash;" + grade[i + 1] + "<br>" : "+");
+        }
+        return div;
+    };
+    legend.addTo(myMap);
 });
 
-function getColor(depth) {
-    switch (true){
-        case depth > 90:
-            return "purple";
-
-        case depth > 60:
-            return "blue"
-
-        case depth < 59:
-            return "green"
-    }
-};
